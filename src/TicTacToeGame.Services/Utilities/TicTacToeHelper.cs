@@ -105,71 +105,80 @@ namespace TicTacToeGame.Services.Utilities
             throw new TicTacToeStateException(gameState);
         }
 
-        public Game.State GetGameStateWon(Cell.State cellState)
+        public Game.State GetGameStateWon(Cell.State mark)
         {
-            if (cellState == Cell.State.CROSS) return Game.State.CROSS_WON;
-            else if (cellState == Cell.State.NAUGHT) return Game.State.NAUGHT_WON;
+            if (mark == Cell.State.CROSS) return Game.State.CROSS_WON;
+            else if (mark == Cell.State.NAUGHT) return Game.State.NAUGHT_WON;
 
-            throw new TicTacToeStateException(cellState);
+            throw new TicTacToeStateException(mark);
         }
 
-        public Game.State GetGameStateNextTurn(Cell.State cellState)
+        public Game.State CalculateGameState(TicTacToe ticTacToe, Cell.State mark)
         {
-            if (cellState == Cell.State.CROSS) return Game.State.NAUGHT_TURN;
-            else if (cellState == Cell.State.NAUGHT) return Game.State.CROSS_TURN;
+            if (mark == Cell.State.BLANK) throw new TicTacToeStateException(mark);
 
-            throw new TicTacToeStateException(cellState);
-        }
+            bool isTicTacToeWon = CheckIfALineOfSameMarksIsCreated(ticTacToe.Cells, mark);
+            if (isTicTacToeWon) return GetGameStateWon(mark);
 
-        public Game.State CalculateGameState(TicTacToe ticTacToe, Cell.State cellState)
-        {
-            if (cellState == Cell.State.BLANK) throw new TicTacToeStateException(cellState);
-
-            bool isTicTacToeWon = false;
-            for (int i = 0; i < TicTacToeConstants.LINE_TABLE_DEF.GetLength(0); i++)
-            {
-                Cell[] cellsForChecking = new Cell[3];
-                for (int j = 0; j < TicTacToeConstants.LINE_TABLE_DEF.GetLength(1); j++)
-                {
-                    int row = TicTacToeConstants.LINE_TABLE_DEF[i, j, 0];
-                    int column = TicTacToeConstants.LINE_TABLE_DEF[i, j, 1];
-                    foreach (Cell cell in ticTacToe.Cells)
-                    {
-                        if (cell.RowNum == (Cell.Row) row
-                            && cell.ColumnField == (Cell.Column) column)
-                        {
-                            cellsForChecking[j] = cell;
-                            break;
-                        }
-                    }                    
-                }
-                int winCount = 0;
-                foreach (Cell cell in cellsForChecking)
-                {
-                    if (cell.CellState == cellState) winCount++;
-                    else break;
-                }
-                if (winCount == 3)
-                {
-                    isTicTacToeWon = true;
-                    break;
-                }
-            }
-
-            if (isTicTacToeWon) return GetGameStateWon(cellState);
-
-            bool isDraw = true;
-            foreach (Cell cell in ticTacToe.Cells)
-            {
-                if (cell.CellState == Cell.State.BLANK)
-                {
-                    isDraw = false;
-                    break;
-                }
-            }
+            bool isDraw = CheckIfBoardIsAlreadyFull(ticTacToe.Cells);
             if (isDraw) return Game.State.DRAW;
 
-            return GetGameStateNextTurn(cellState);
+            return ToggleGameStateForNextTurn(mark);
+        }
+
+        //-------------private methods----------------//
+
+        private bool CheckIfALineOfSameMarksIsCreated(IEnumerable<Cell> cells, Cell.State mark)
+        {
+            for (int i = 0; i < TicTacToeConstants.LINE_TABLE_DEF.GetLength(0); i++)
+            {
+                Cell[] cellsInOneLine = GetCellsInOneLine(cells, i);
+                
+                int sameCellsCount = 0;
+                foreach (Cell cell in cellsInOneLine)
+                {
+                    if (cell.CellState == mark) sameCellsCount++;
+                    else break;
+                }
+
+                if (sameCellsCount == 3) return true;
+            }
+
+            return false;
+        }
+
+        private Cell[] GetCellsInOneLine(IEnumerable<Cell> cells, int lineIndex) 
+        {
+            int cellCountInOneLine = TicTacToeConstants.LINE_TABLE_DEF.GetLength(1);
+
+            Cell[] result = new Cell[cellCountInOneLine];
+
+            for (int i = 0; i < cellCountInOneLine; i++)
+            {
+                int row = TicTacToeConstants.LINE_TABLE_DEF[lineIndex, i, 0];
+                int column = TicTacToeConstants.LINE_TABLE_DEF[lineIndex, i, 1];
+                result[i] = GetCellFromRowAndCol(cells, row, column);
+            }
+
+            return result;
+        }
+        
+        //a single blank mark means that that the board isn't full
+        private bool CheckIfBoardIsAlreadyFull(IEnumerable<Cell> cells)
+        {
+            foreach (Cell cell in cells)
+            {
+                if (cell.CellState == Cell.State.BLANK) return false;
+            }
+
+            return true;
+        }
+        private Game.State ToggleGameStateForNextTurn(Cell.State mark)
+        {
+            if (mark == Cell.State.CROSS) return Game.State.NAUGHT_TURN;
+            else if (mark == Cell.State.NAUGHT) return Game.State.CROSS_TURN;
+
+            throw new TicTacToeStateException(mark);
         }
     }
 }
