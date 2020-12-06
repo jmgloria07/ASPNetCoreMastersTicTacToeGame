@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# ignoring app specific settings files
+src/TicTacToeGame.Api/appsettings.Development.json
+src/TicTacToeGame.Api/appsettings.json
+src/TicTacToeGame.Repositories/appsettings.json
