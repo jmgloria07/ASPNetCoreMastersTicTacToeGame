@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TicTacToeGame.Api.Models
 {
-    public class SimpleOkApiModel : AbstractResponseApiModel
+    public class OkResponseApiModel : AbstractResponseApiModel
     {
     }
 }

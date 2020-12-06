@@ -9,7 +9,7 @@ using TicTacToeGame.Api.Models;
 using TicTacToeGame.Services.Exceptions;
 using TicTacToeGame.Services.Utilities;
 
-namespace TicTacToeGame.Api
+namespace TicTacToeGame.Api.Infrastructures
 {
     public class TicTacToeExceptionFilter : IExceptionFilter
     {
@@ -21,7 +21,6 @@ namespace TicTacToeGame.Api
 
         public void OnException(ExceptionContext context)
         {
-            context.Result = null;
             int code = TicTacToeConstants.UNHANDLED_ERROR_CODE;
 
             if (context.Exception is TicTacToeServiceException appException)
@@ -30,24 +29,26 @@ namespace TicTacToeGame.Api
                 code = appException.TicTacToeErrorCode;
             }                
 
-            ErrorApiModel error = new ErrorApiModel
+            ErrorResponseApiModel error = new ErrorResponseApiModel
             {
-                Message = context.Exception.Message,
-                ResultInfo = new
+                Message = "An error occurred.",
+                ResultInfo = new ErrorResultInfo
                 {
-                    code, timeStamp = DateTime.UtcNow
+                    Code = code,
+                    Message = context.Exception.Message,
+                    TimeStamp = DateTime.UtcNow
                 }
             };
 
             if (context.Exception is TicTacToeIdentityException)
                 context.Result = new UnauthorizedObjectResult(error);
+            else if (context.Exception is TicTacToeNotFoundException)
+                context.Result = new NotFoundObjectResult(error);
             else if (context.Exception is TicTacToeLogicException)
                 context.Result = new BadRequestObjectResult(error);
-
-            
-            if (context.Result == null)
+            else
             {
-                _logger.LogError(context.Exception.Message, context.Exception.StackTrace);
+                _logger.LogError(null, context.Exception);
                 context.Result = new ObjectResult(error)
                 {
                     StatusCode = 500

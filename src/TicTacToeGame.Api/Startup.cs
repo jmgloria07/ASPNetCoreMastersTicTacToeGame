@@ -14,9 +14,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using TicTacToeGame.Api.Properties;
+using TicTacToeGame.Api.Infrastructures;
 using TicTacToeGame.Repositories;
 using TicTacToeGame.Services;
 using TicTacToeGame.Services.Utilities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TicTacToeGame.Api
 {
@@ -48,6 +50,8 @@ namespace TicTacToeGame.Api
                 options.Database.Migrate();
             });
 
+            services.AddSwaggerGen();
+
             SecurityKey securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Authentication:Jwt:SecurityKey"]));
             services.Configure<JwtOptions>(options => 
                 options.SecurityKey = securityKey);
@@ -67,10 +71,19 @@ namespace TicTacToeGame.Api
                 }
             );
 
-            services.AddSingleton<TicTacToeHelper>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("UserShouldBeInvolved", policyBuilder =>
+                {
+                    policyBuilder.AddRequirements(new IsUserInvolved());
+                });
+            });
+
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IGameRepository, GameRepository>();
             services.AddScoped<IGameService, GameService>();
+            services.AddScoped<IGameRepository, GameRepository>();
+            services.AddSingleton<IAuthorizationHandler, IsUserInvolvedAuthorizationHandler>();
+            services.AddSingleton<TicTacToeHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,6 +99,12 @@ namespace TicTacToeGame.Api
                 var context = serviceScope.ServiceProvider.GetRequiredService<TicTacToeDbContext>();
                 context.Database.Migrate();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options => { 
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "TicTacToe Game API v1");
+                options.RoutePrefix = string.Empty;
+            });
 
             app.UseRouting();
 

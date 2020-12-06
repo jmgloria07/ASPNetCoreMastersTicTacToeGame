@@ -56,10 +56,10 @@ namespace TicTacToeGame.Services.Utilities
             if (cell.CellState != Cell.State.BLANK) 
                 throw new TicTacToeStateException(cell.CellState);
 
-            bool isCrossTurnAndCastedByCross = game.GameState == Game.State.CROSS_TURN;
-            //TODO && castedBy.Equals(game.PlayerCross);
-            bool isNaughtTurnAndCastedByNaught = game.GameState == Game.State.NAUGHT_TURN;
-                //TODO && castedBy.Equals(game.PlayerNaught);
+            bool isCrossTurnAndCastedByCross = game.GameState == Game.State.CROSS_TURN
+                && castedBy.Equals(game.PlayerCross);
+            bool isNaughtTurnAndCastedByNaught = game.GameState == Game.State.NAUGHT_TURN
+                && castedBy.Equals(game.PlayerNaught);
 
             return isCrossTurnAndCastedByCross || isNaughtTurnAndCastedByNaught;
         }
@@ -72,7 +72,7 @@ namespace TicTacToeGame.Services.Utilities
                     && (Cell.Column) column == cell.ColumnField)
                     return cell;
             }
-            return null;
+            throw new CellNotFoundException();
         }
 
         public TicTacToe CastTurn(TicTacToe ticTacToe, Cell cell, Game.State gameState)

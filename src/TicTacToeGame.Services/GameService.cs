@@ -56,7 +56,8 @@ namespace TicTacToeGame.Services
                 {
                     Cells = _ticTacToeHelper.PopulateCellDtos(game.TicTacToe.Cells)
                 },
-                GameState = game.GameState
+                GameState = game.GameState,
+                OwnerId = game.OwnerId
             };
         }
 
@@ -93,6 +94,7 @@ namespace TicTacToeGame.Services
                 throw new TurnUncastedException();
 
             cell.OwnerId = turnDto.CastedBy;
+
             game.TicTacToe = _ticTacToeHelper.CastTurn(game.TicTacToe, cell, game.GameState);
 
             game.GameState = _ticTacToeHelper.CalculateGameState(game.TicTacToe, cell.CellState);
@@ -108,7 +110,8 @@ namespace TicTacToeGame.Services
                 TicTacToe = new TicTacToeDto()
                 {
                     Cells = _ticTacToeHelper.PopulateCellDtos(game.TicTacToe.Cells)
-                }
+                },
+                OwnerId = game.OwnerId
             };
         }
     }

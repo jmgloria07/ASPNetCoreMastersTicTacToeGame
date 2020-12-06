@@ -57,6 +57,11 @@ namespace TicTacToeGame.Services
 
             if (!result.Succeeded)
             {
+                foreach (IdentityError error in result.Errors)
+                {
+                    bool isPasswordRelated = error.Code.Contains("Password");
+                    if (isPasswordRelated) throw new InvalidParameterException();
+                }
                 throw new UserAlreadyExistsException();
             }
             

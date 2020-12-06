@@ -11,11 +11,10 @@ using TicTacToeGame.Api.Models;
 using TicTacToeGame.Api.Properties;
 using TicTacToeGame.Services;
 using TicTacToeGame.Services.Dto;
-using TicTacToeGame.Services.Exceptions;
-using TicTacToeGame.Services.Utilities;
 
 namespace TicTacToeGame.Api.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -33,7 +32,9 @@ namespace TicTacToeGame.Api.Controllers
             _userService = userService;
             _jwtOptions = jwtOptions.Value;
         }
-        public async Task<IActionResult> Register([FromBody] RegisterApiModel form)
+
+        [HttpPost]
+        public async Task<ActionResult<AbstractResponseApiModel>> Register([FromBody] RegisterApiModel form)
         {
             UserDTO user = new UserDTO
             {
@@ -52,8 +53,8 @@ namespace TicTacToeGame.Api.Controllers
                 + Request.Host
                 + $"/api/users/{user.Id}/email/confirm?code={encodedCode}";
 
-            //TODO: send to the generated URL to email
-            return Accepted("/users/{user.Id}", new SimpleOkApiModel
+            //TODO: send the generated URL to email
+            return Accepted("/users/{user.Id}", new OkResponseApiModel
             {
                 Message = PLEASE_CONFIRM_MSG,
                 ResultInfo = new
@@ -64,22 +65,20 @@ namespace TicTacToeGame.Api.Controllers
             });
         }
 
-        [HttpGet]
-        [Route("{userId}/email/confirm")]
-        public async Task<IActionResult> ConfirmEmail(string userId, [FromQuery] string code)
+        [HttpGet("{userId}/email/confirm")]
+        public async Task<ActionResult<AbstractResponseApiModel>> ConfirmEmail(string userId, [FromQuery] string code)
         {
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             await _userService.ConfirmEmail(userId, code);
 
-            return Created("/users/{user.Id}", new SimpleOkApiModel
+            return Created("/users/{user.Id}", new OkResponseApiModel
             {
                 Message = EMAIL_CONFIRMED_TXT
             });
         }
 
-        [HttpPost]
-        [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginApiModel model)
+        [HttpPost("login")]
+        public async Task<ActionResult<AbstractResponseApiModel>> Login([FromBody] LoginApiModel model)
         {
             var token = await _userService.CreateLoginToken(new UserDTO
             {
@@ -87,7 +86,7 @@ namespace TicTacToeGame.Api.Controllers
                 Password = model.Password
             }, _jwtOptions.SecurityKey);
 
-            return Ok(new SimpleOkApiModel
+            return Ok(new OkResponseApiModel
             {
                 Message = LOGIN_SUCCESS_TXT,
                 ResultInfo = new
