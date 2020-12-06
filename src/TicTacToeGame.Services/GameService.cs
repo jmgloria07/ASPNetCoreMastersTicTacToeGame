@@ -90,7 +90,7 @@ namespace TicTacToeGame.Services
                 game.TicTacToe.Cells, turnDto.Row, turnDto.Column);
 
             if (!_ticTacToeHelper.ShouldSetCell(game, turnDto.CastedBy, cell)) 
-                throw new InputValidationException();
+                throw new TurnUncastedException();
 
             cell.OwnerId = turnDto.CastedBy;
             game.TicTacToe = _ticTacToeHelper.CastTurn(game.TicTacToe, cell, game.GameState);

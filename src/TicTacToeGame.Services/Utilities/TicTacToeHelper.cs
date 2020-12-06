@@ -48,11 +48,13 @@ namespace TicTacToeGame.Services.Utilities
 
         public bool ShouldSetCell(Game game, string castedBy, Cell cell)
         {
-            if (game.GameState == Game.State.NAUGHT_WON 
+            if (game.GameState == Game.State.NAUGHT_WON
                 || game.GameState == Game.State.CROSS_WON
-                || game.GameState == Game.State.DRAW
-                || cell.CellState != Cell.State.BLANK) 
-                throw new InputValidationException();
+                || game.GameState == Game.State.DRAW)
+                throw new TicTacToeStateException(game.GameState);
+
+            if (cell.CellState != Cell.State.BLANK) 
+                throw new TicTacToeStateException(cell.CellState);
 
             bool isCrossTurnAndCastedByCross = game.GameState == Game.State.CROSS_TURN;
             //TODO && castedBy.Equals(game.PlayerCross);
@@ -75,7 +77,7 @@ namespace TicTacToeGame.Services.Utilities
 
         public TicTacToe CastTurn(TicTacToe ticTacToe, Cell cell, Game.State gameState)
         {
-            if (ticTacToe == null) throw new InputValidationException();
+            if (ticTacToe == null) throw new NullParameterException();
 
             IList<Cell> castedTicTacToe = new List<Cell>();
             foreach (Cell ticTacToeCell in ticTacToe.Cells)
@@ -100,7 +102,7 @@ namespace TicTacToeGame.Services.Utilities
             else if (gameState == Game.State.NAUGHT_TURN) 
                 return Cell.State.NAUGHT;
 
-            throw new InputValidationException();
+            throw new TicTacToeStateException(gameState);
         }
 
         public Game.State GetGameStateWon(Cell.State cellState)
@@ -108,7 +110,7 @@ namespace TicTacToeGame.Services.Utilities
             if (cellState == Cell.State.CROSS) return Game.State.CROSS_WON;
             else if (cellState == Cell.State.NAUGHT) return Game.State.NAUGHT_WON;
 
-            throw new InputValidationException();
+            throw new TicTacToeStateException(cellState);
         }
 
         public Game.State GetGameStateNextTurn(Cell.State cellState)
@@ -116,12 +118,12 @@ namespace TicTacToeGame.Services.Utilities
             if (cellState == Cell.State.CROSS) return Game.State.NAUGHT_TURN;
             else if (cellState == Cell.State.NAUGHT) return Game.State.CROSS_TURN;
 
-            throw new InputValidationException();
+            throw new TicTacToeStateException(cellState);
         }
 
         public Game.State CalculateGameState(TicTacToe ticTacToe, Cell.State cellState)
         {
-            if (cellState == Cell.State.BLANK) throw new InputValidationException();
+            if (cellState == Cell.State.BLANK) throw new TicTacToeStateException(cellState);
 
             bool isTicTacToeWon = false;
             for (int i = 0; i < TicTacToeConstants.LINE_TABLE_DEF.GetLength(0); i++)

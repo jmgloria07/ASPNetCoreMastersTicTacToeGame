@@ -18,5 +18,6 @@ namespace TicTacToeGame.Services.Utilities
             { { 1, 2 }, { 2, 2 }, { 3, 2 } }, //middle vertical line
             { { 1, 3 }, { 2, 3 }, { 3, 3 } }  //right vertical line
         };
+        public const int UNHANDLED_ERROR_CODE = 0;
     }
 }
