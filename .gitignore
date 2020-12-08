@@ -342,4 +342,9 @@ healthchecksdb
 # ignoring app specific settings files
 src/TicTacToeGame.Api/appsettings.Development.json
 src/TicTacToeGame.Api/appsettings.json
+src/TicTacToeGame.Api/.config/
+src/TicTacToeGame.Api/Properties/ServiceDependencies/
+src/TicTacToeGame.Api/Properties/serviceDependencies.aspnetcoremasters-tictactoe - Web Deploy.json
+src/TicTacToeGame.Api/Properties/serviceDependencies.json
+src/TicTacToeGame.Api/Properties/serviceDependencies.local.json
 src/TicTacToeGame.Repositories/appsettings.json
