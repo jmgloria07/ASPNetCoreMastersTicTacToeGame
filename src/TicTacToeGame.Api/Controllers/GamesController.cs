@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,16 +78,17 @@ namespace TicTacToeGame.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<AbstractResponseApiModel>> Put(int id, [FromBody] CastTurnApiModel model)
         {
+            ClaimsPrincipal user = User;
             GameDTO game = await _gameService.CastTurn(
                 new TurnDto()
                 {
                     Game = id,
                     Column = model.Column,
                     Row = model.Row,
-                    CastedBy = User.FindFirst("Id").Value
+                    CastedBy = user.FindFirst("Id").Value
                 });
             return CustomOk(
-                    $"Turn casted for game ID: {game.Id}",
+                    $"Turn casted by {user.FindFirst("Email").Value} for game ID: {game.Id}; {game.GameState}",
                     new GameDTO[] { game });      
         }
 
