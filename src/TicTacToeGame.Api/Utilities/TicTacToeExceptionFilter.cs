@@ -9,7 +9,7 @@ using TicTacToeGame.Api.Models;
 using TicTacToeGame.Services.Exceptions;
 using TicTacToeGame.Services.Utilities;
 
-namespace TicTacToeGame.Api.Infrastructures
+namespace TicTacToeGame.Api.Utilities
 {
     public class TicTacToeExceptionFilter : IExceptionFilter
     {

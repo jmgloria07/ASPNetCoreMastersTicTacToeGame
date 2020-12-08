@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TicTacToeGame.Api.Infrastructures
+namespace TicTacToeGame.Api.Utilities
 {
     public class IsUserInvolved : IAuthorizationRequirement
     {

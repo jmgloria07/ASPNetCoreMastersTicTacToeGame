@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TicTacToeGame.Services.Dto;
 
-namespace TicTacToeGame.Api.Infrastructures
+namespace TicTacToeGame.Api.Utilities
 {
     public class IsUserInvolvedAuthorizationHandler : AuthorizationHandler<IsUserInvolved, GameDTO>
     {

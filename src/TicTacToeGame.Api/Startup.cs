@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using TicTacToeGame.Api.Properties;
-using TicTacToeGame.Api.Infrastructures;
+using TicTacToeGame.Api.Utilities;
 using TicTacToeGame.Repositories;
 using TicTacToeGame.Services;
 using TicTacToeGame.Services.Utilities;
