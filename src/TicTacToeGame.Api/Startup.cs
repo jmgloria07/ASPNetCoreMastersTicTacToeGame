@@ -16,9 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using TicTacToeGame.Api.Properties;
 using TicTacToeGame.Api.Utilities;
 using TicTacToeGame.Repositories;
-using TicTacToeGame.Services;
-using TicTacToeGame.Services.Utilities;
-using Microsoft.AspNetCore.Authorization;
 
 namespace TicTacToeGame.Api
 {
@@ -78,12 +75,6 @@ namespace TicTacToeGame.Api
                     policyBuilder.AddRequirements(new IsUserInvolved());
                 });
             });
-
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IGameService, GameService>();
-            services.AddScoped<IGameRepository, GameRepository>();
-            services.AddSingleton<IAuthorizationHandler, IsUserInvolvedAuthorizationHandler>();
-            services.AddSingleton<TicTacToeHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

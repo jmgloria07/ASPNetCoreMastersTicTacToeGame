@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DryIoc;
+using DryIoc.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -21,6 +23,10 @@ namespace TicTacToeGame.Api
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).UseServiceProviderFactory(new DryIocServiceProviderFactory())
+                    .ConfigureContainer<Container>((hostContext, container) =>
+                    {
+                        container.ConfigureServiceProvider<CompositionRoot>();
+                    });
     }
 }
