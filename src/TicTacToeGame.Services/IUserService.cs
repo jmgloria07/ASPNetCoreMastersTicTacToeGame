@@ -10,7 +10,7 @@ namespace TicTacToeGame.Services
     public interface IUserService
     {
         public Task<UserDTO> RegisterWithConfirmationCode(UserDTO user);
-        public Task<string> CreateLoginToken(UserDTO user, SecurityKey securityKey);
+        public Task<UserDTO> CreateLoginToken(UserDTO user, SecurityKey securityKey);
         public Task ConfirmEmail(string userId, string code);
     }
 }

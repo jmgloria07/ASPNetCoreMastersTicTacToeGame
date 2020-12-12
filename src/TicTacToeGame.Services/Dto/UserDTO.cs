@@ -11,5 +11,6 @@ namespace TicTacToeGame.Services.Dto
         public string Email { get; set; }
         public string EmailCode { get; set; }
         public string Password { get; set; }
+        public string LoginToken { get; set; }
     }
 }

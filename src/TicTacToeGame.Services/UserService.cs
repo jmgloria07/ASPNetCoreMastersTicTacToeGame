@@ -32,7 +32,7 @@ namespace TicTacToeGame.Services
             if (!result.Succeeded) throw new EmailCodeDoesNotMatchException();
 
         }
-        public async Task<string> CreateLoginToken(UserDTO user, SecurityKey securityKey)
+        public async Task<UserDTO> CreateLoginToken(UserDTO user, SecurityKey securityKey)
         {
             var result = await _signinManager.PasswordSignInAsync(user.Email, 
                     user.Password, 
@@ -44,7 +44,11 @@ namespace TicTacToeGame.Services
                 throw new UserLoginException();
             }
             var identityUser = await _userManager.FindByEmailAsync(user.Email);
-            return GenerateTokenAsync(identityUser, securityKey);
+            return new UserDTO
+            {
+                Id = identityUser.Id,
+                LoginToken = GenerateTokenAsync(identityUser, securityKey)
+            };
         }
 
         public async Task<UserDTO> RegisterWithConfirmationCode(UserDTO user)

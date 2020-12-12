@@ -80,7 +80,7 @@ namespace TicTacToeGame.Api.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AbstractResponseApiModel>> Login([FromBody] LoginApiModel model)
         {
-            var token = await _userService.CreateLoginToken(new UserDTO
+            UserDTO user = await _userService.CreateLoginToken(new UserDTO
             {
                 Email = model.Email,
                 Password = model.Password
@@ -91,7 +91,8 @@ namespace TicTacToeGame.Api.Controllers
                 Message = LOGIN_SUCCESS_TXT,
                 ResultInfo = new
                 {
-                    token
+                    id = user.Id,
+                    token = user.LoginToken
                 }
             });
         }
