@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicTacToeGame.Api.Models;
+using TicTacToeGame.DomainsModels;
 using TicTacToeGame.Services;
 using TicTacToeGame.Services.Dto;
 using TicTacToeGame.Services.Exceptions;
@@ -32,7 +33,7 @@ namespace TicTacToeGame.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<AbstractResponseApiModel>> Get()
         {
-            IEnumerable<GameDTO> games = _gameService.GetGames();
+            IEnumerable<Game> games = await _gameService.GetGames();
 
             games = await FilterForbiddenGames(games);
 
@@ -48,22 +49,25 @@ namespace TicTacToeGame.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AbstractResponseApiModel>> Get(int id)
         {
-            GameDTO game = await _gameService.GetGame(id);
+            Game game = await _gameService.GetGame(id);
 
             if (game == null || await IsSingleGameForbidden(game))
                 throw new TicTacToeNotFoundException();
 
             return CustomOk(
                     $"Found game with ID: {id}; {game.GameState}", 
-                    new GameDTO[] { game });
+                    new Game[] { game });
         }
 
         // POST api/<GamesController>
         [HttpPost]
         public async Task<ActionResult<AbstractResponseApiModel>> Post([FromBody] CreateGameApiModel model)
         {
-            GameDTO game = await _gameService.Save(
-                new GameDTO()
+            string ownerId = User.FindFirst("Id").Value;
+            if (ownerId == null) throw new UserNotFoundException();
+
+            Game game = await _gameService.CreateGame(
+                new Game()
                 {
                     PlayerCross = model.PlayerCross,
                     PlayerNaught = model.PlayerNaught,
@@ -71,7 +75,7 @@ namespace TicTacToeGame.Api.Controllers
                 });
             return CustomOk(
                     $"Game started for ID: {game.Id}",
-                    new GameDTO[] { game });
+                    new Game[] { game });
         }
 
         // PUT api/<GamesController>/5
@@ -79,7 +83,7 @@ namespace TicTacToeGame.Api.Controllers
         public async Task<ActionResult<AbstractResponseApiModel>> Put(int id, [FromBody] CastTurnApiModel model)
         {
             ClaimsPrincipal user = User;
-            GameDTO game = await _gameService.CastTurn(
+            Game game = await _gameService.CastTurn(
                 new TurnDto()
                 {
                     Game = id,
@@ -89,7 +93,7 @@ namespace TicTacToeGame.Api.Controllers
                 });
             return CustomOk(
                     $"Turn casted by {user.FindFirst("Email").Value} for game ID: {game.Id}; {game.GameState}",
-                    new GameDTO[] { game });      
+                    new Game[] { game });      
         }
 
         // DELETE api/<GamesController>/5
@@ -101,7 +105,7 @@ namespace TicTacToeGame.Api.Controllers
 
 
         //-------- private methods ------------//
-        private ActionResult<AbstractResponseApiModel> CustomOk(string message, IEnumerable<GameDTO> data)
+        private ActionResult<AbstractResponseApiModel> CustomOk(string message, IEnumerable<Game> data)
         {
             return Ok(new OkResponseApiModel
             {
@@ -114,7 +118,7 @@ namespace TicTacToeGame.Api.Controllers
             });
         }
 
-        private async Task<IEnumerable<GameDTO>> FilterForbiddenGames(IEnumerable<GameDTO> games)
+        private async Task<IEnumerable<Game>> FilterForbiddenGames(IEnumerable<Game> games)
         {
             if (games == null) return games;
 
@@ -129,7 +133,7 @@ namespace TicTacToeGame.Api.Controllers
             return games;
         }
 
-        private async Task<bool> IsSingleGameForbidden(GameDTO game)
+        private async Task<bool> IsSingleGameForbidden(Game game)
         {
             var authResult = await _authService.AuthorizeAsync(User, game, "UserShouldBeInvolved");
             return !authResult.Succeeded;

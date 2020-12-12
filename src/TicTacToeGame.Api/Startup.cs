@@ -35,7 +35,12 @@ namespace TicTacToeGame.Api
             services.AddControllers(options =>
             {
                 options.Filters.Add<TicTacToeExceptionFilter>();
-            });
+            }).AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                }               
+            );
 
             string connection = Configuration.GetConnectionString("SqlConnectionString");
             services.AddDbContext<TicTacToeDbContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly("TicTacToeGame.Repositories")));

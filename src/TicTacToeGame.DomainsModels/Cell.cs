@@ -23,11 +23,13 @@ namespace TicTacToeGame.DomainsModels
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[JsonIgnore]
         public int Id { get; set; }
         public Row RowNum { get; set; }
         public Column ColumnField { get; set; }
         public State CellState { get; set; }
         public string OwnerId { get; set; }
+        public string CastedBy { get; set; }
         public DateTime SetDate { get; set; }
     }
 }

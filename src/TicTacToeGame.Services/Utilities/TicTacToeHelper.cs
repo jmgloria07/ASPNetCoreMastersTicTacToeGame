@@ -9,7 +9,7 @@ namespace TicTacToeGame.Services.Utilities
 {
     public class TicTacToeHelper
     {
-        public IEnumerable<Cell> InitializeCells()
+        public IEnumerable<Cell> InitializeCells(string ownerId)
         {
             IList<Cell> result = new List<Cell>();
             
@@ -21,7 +21,8 @@ namespace TicTacToeGame.Services.Utilities
                     {
                         ColumnField = column,
                         RowNum = row,
-                        CellState = Cell.State.BLANK
+                        CellState = Cell.State.BLANK,
+                        OwnerId = ownerId
                     };
                     result.Add(cell);
                 }

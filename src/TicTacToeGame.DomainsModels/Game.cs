@@ -18,7 +18,6 @@ namespace TicTacToeGame.DomainsModels
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int TicTacToeId { get; set; }
         public TicTacToe TicTacToe { get; set; }
         public string PlayerCross { get; set; }
         public string PlayerNaught { get; set; }

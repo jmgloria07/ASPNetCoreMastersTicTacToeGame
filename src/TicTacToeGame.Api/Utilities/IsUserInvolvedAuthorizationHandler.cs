@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using TicTacToeGame.Services.Dto;
+using TicTacToeGame.DomainsModels;
 
 namespace TicTacToeGame.Api.Utilities
 {
-    public class IsUserInvolvedAuthorizationHandler : AuthorizationHandler<IsUserInvolved, GameDTO>
+    public class IsUserInvolvedAuthorizationHandler : AuthorizationHandler<IsUserInvolved, Game>
     {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsUserInvolved requirement, GameDTO resource)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsUserInvolved requirement, Game resource)
         {
             ClaimsPrincipal appUser = context.User;
             if (!appUser.HasClaim(c => c.Type == "Id")) return Task.CompletedTask;

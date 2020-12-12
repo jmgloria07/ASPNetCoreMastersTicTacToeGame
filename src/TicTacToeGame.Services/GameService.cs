@@ -21,69 +21,30 @@ namespace TicTacToeGame.Services
             _ticTacToeHelper = ticTacToeHelper;
         }
 
-        public IEnumerable<GameDTO> GetGames()
+        public async Task<IEnumerable<Game>> GetGames()
         {
-            IList<GameDTO> games = new List<GameDTO>();
+            return await _gameRepository.GetAll();
+        }
+
+        public async Task<Game> GetGame(int id)
+        {
+            return await _gameRepository.GetOne(id);
+        }
+
+        public async Task<Game> CreateGame(Game game)
+        {
+            game.DateCreated = DateTime.UtcNow;
+            game.TicTacToe = new TicTacToe()
+            {
+                Cells = _ticTacToeHelper.InitializeCells(game.OwnerId)
+            };
+            game.GameState = Game.State.CROSS_TURN; //cross always starts
+
+            game = await _gameRepository.SaveAsync(game);
             
-            foreach (Game game in _gameRepository.GetAll())
-            {
-                games.Add(new GameDTO() { 
-                    Id = game.Id,
-                    GameState = game.GameState,
-                    OwnerId = game.OwnerId,
-                    PlayerCross = game.PlayerCross,
-                    PlayerNaught = game.PlayerNaught,
-                    TicTacToe = new TicTacToeDto()
-                    {
-                        Cells = _ticTacToeHelper.PopulateCellDtos(game.TicTacToe.Cells)
-                    }
-                });
-            }
-
-            return games;
+            return game;
         }
-
-        public async Task<GameDTO> GetGame(int id)
-        {
-            Game game = await _gameRepository.GetOne(id);
-            if (game == null) return null;
-            return new GameDTO
-            {
-                Id = game.Id,
-                PlayerCross = game.PlayerCross,
-                PlayerNaught = game.PlayerNaught,
-                TicTacToe = new TicTacToeDto()
-                {
-                    Cells = _ticTacToeHelper.PopulateCellDtos(game.TicTacToe.Cells)
-                },
-                GameState = game.GameState,
-                OwnerId = game.OwnerId
-            };
-        }
-
-        public async Task<GameDTO> Save(GameDTO dto)
-        {
-            dto.GameState = Game.State.CROSS_TURN; //cross always starts
-            Game game = await _gameRepository.SaveAsync(new Game()
-            {
-                PlayerCross = dto.PlayerCross,
-                PlayerNaught = dto.PlayerNaught,
-                OwnerId = dto.OwnerId,
-                DateCreated = DateTime.UtcNow,
-                TicTacToe = new TicTacToe()
-                {
-                    Cells = _ticTacToeHelper.InitializeCells()
-                },
-                GameState = dto.GameState
-            });
-            dto.Id = game.Id;
-            dto.TicTacToe = new TicTacToeDto()
-            {
-                Cells = _ticTacToeHelper.PopulateCellDtos(game.TicTacToe.Cells)
-            };
-            return dto;
-        }
-        public async Task<GameDTO> CastTurn(TurnDto turnDto)
+        public async Task<Game> CastTurn(TurnDto turnDto)
         {
             Game game = await _gameRepository.GetOne(turnDto.Game);
 
@@ -93,26 +54,13 @@ namespace TicTacToeGame.Services
             if (!_ticTacToeHelper.ShouldSetCell(game, turnDto.CastedBy, cell)) 
                 throw new TurnUncastedException();
 
-            cell.OwnerId = turnDto.CastedBy;
+            cell.CastedBy = turnDto.CastedBy;
 
             game.TicTacToe = _ticTacToeHelper.CastTurn(game.TicTacToe, cell, game.GameState);
 
             game.GameState = _ticTacToeHelper.CalculateGameState(game.TicTacToe, cell.CellState);
 
-            game = await _gameRepository.UpdateAsync(game);
-            
-            return new GameDTO()
-            {
-                Id = game.Id,
-                GameState = game.GameState,
-                PlayerCross = game.PlayerCross,
-                PlayerNaught = game.PlayerNaught,
-                TicTacToe = new TicTacToeDto()
-                {
-                    Cells = _ticTacToeHelper.PopulateCellDtos(game.TicTacToe.Cells)
-                },
-                OwnerId = game.OwnerId
-            };
+            return await _gameRepository.UpdateAsync(game);
         }
     }
 }
