@@ -143,6 +143,14 @@ namespace TicTacToeGame.Api
 
             app.UseRouting();
 
+            app.UseCors(options =>
+            {
+                options.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+
             app.UseAuthentication();
             app.UseAuthorization();
 
