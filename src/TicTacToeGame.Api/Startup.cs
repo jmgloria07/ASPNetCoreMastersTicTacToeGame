@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TicTacToeGame.Api.Middlewares;
 using TicTacToeGame.Api.Properties;
 using TicTacToeGame.Api.Utilities;
 using TicTacToeGame.Repositories;
@@ -119,16 +120,13 @@ namespace TicTacToeGame.Api
                     policyBuilder.AddRequirements(new IsUserInvolved());
                 });
             });
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<TicTacToeDbContext>();
@@ -141,11 +139,15 @@ namespace TicTacToeGame.Api
                 options.RoutePrefix = string.Empty;
             });
 
+            //custom middleware
+            app.UseExceptionMiddleware();
+            app.UseLogGetRequestMiddleware();
+
             app.UseRouting();
 
-            app.UseCors(options =>
+            app.UseCors(policy =>
             {
-                options.AllowAnyOrigin()
+                policy.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
