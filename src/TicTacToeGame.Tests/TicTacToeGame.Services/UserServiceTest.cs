@@ -10,55 +10,54 @@ using TicTacToeGame.Services.Utilities;
 using TicTacToeGame.Api.Properties;
 using Microsoft.Extensions.Options;
 using TicTacToeGame.Services.Dto;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TicTacToeGame.Tests.TicTacToeGame.Services
 {
     public class UserServiceTest
-    {
-        //private readonly SignInManager<IdentityUser> _signinManager;
-        private readonly IUserService _userService;
-        private readonly JwtOptions _jwtOptions;
+    {       
         private readonly TicTacToeHelper _ticTacToeHelper = new TicTacToeHelper();
-
-        public UserServiceTest(IUserService userService,
-            IOptions<JwtOptions> jwtOptions)
-        {
-            _userService = userService;
-            _jwtOptions = jwtOptions.Value;
-        }
 
         #region Tests
         [Fact]
         public async Task ConfirmEmailSuccess_Test()
         {
             var mockUser = this.GetMockUserData();
-            var exception = await Record.ExceptionAsync(() => _userService.ConfirmEmail(mockUser.Id, _ticTacToeHelper.GenerateTokenAsync(mockUser, _jwtOptions.SecurityKey)));
+            IUserService _userService = MockConfirmEmail(mockUser);
+
+            var exception = await Record.ExceptionAsync(() => _userService.ConfirmEmail(mockUser.Id, _ticTacToeHelper.GenerateTokenAsync(mockUser, GetMockSecurityKey())));
             Assert.Null(exception);
         }
 
         [Fact]
-        public async Task ConfirmEmailFail_Test()
+        public async Task CreateLoginTokenSuccess_Test()
         {
             var mockUser = this.GetMockUserData();
-            var exception = await Record.ExceptionAsync(() => _userService.ConfirmEmail("", _ticTacToeHelper.GenerateTokenAsync(mockUser, _jwtOptions.SecurityKey)));
-            Assert.NotNull(exception);
-        }
-
-        [Fact]
-        public async Task CreateLoginTokenFail_Test()
-        {
-            var mockUser = this.GetMockUserData();
-            mockUser.Email = null;
+            IUserService _userService = MockCreateLoginToken();           
 
             var exception = await Record.ExceptionAsync(() => _userService.CreateLoginToken(new UserDTO
             {
                 Email = mockUser.Email,
                 Password = "testpassword",
-            }, _jwtOptions.SecurityKey));
+            }, GetMockSecurityKey()));
 
-            Assert.NotNull(exception);            
+            Assert.Null(exception);            
         }
 
+        [Fact]
+        public async Task RegisterWithConfirmationCodeSuccess_Test()
+        {
+            var mockUser = this.GetMockUserData();
+            IUserService _userService = MockRegisterWithConfirmationCode();
+
+            var exception = await Record.ExceptionAsync(() => _userService.RegisterWithConfirmationCode(new UserDTO
+            {
+                Email = mockUser.Email,
+                Password = "testpassword",
+            }));
+
+            Assert.Null(exception);
+        }
         #endregion
 
         #region Mocks
@@ -67,22 +66,59 @@ namespace TicTacToeGame.Tests.TicTacToeGame.Services
             var user = new IdentityUser()
             {
                 Id = "1234",
-                UserName = "user@test.com"
+                UserName = "user@test.com",
+                Email = "user@test.com",
             };
             return user;
         }
 
-        public static Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class
+        private SecurityKey GetMockSecurityKey()
         {
-            var store = new Mock<IUserStore<TUser>>();
-            var mgr = new Mock<UserManager<TUser>>(store.Object, null, null, null, null, null, null, null, null);
-            mgr.Object.UserValidators.Add(new UserValidator<TUser>());
-            mgr.Object.PasswordValidators.Add(new PasswordValidator<TUser>());
-            return mgr;
+            SecurityKey securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IlJleHh4IiwiZXhwIjoxNjA3OTY2NzE0LCJpYXQiOjE2MDc5NjY3MTR9.CQYLlvzak41WZeJ3THHCGXZS9103up3w6JzNMeeikfg"));
+            return securityKey;
+        }
+
+
+        private IUserService MockConfirmEmail(IdentityUser userToMock)
+        {
+            Mock<IUserService> mockObject = new Mock<IUserService>();
+            if (userToMock != null)
+            {
+                mockObject.Setup(m => m.ConfirmEmail(userToMock.Id, _ticTacToeHelper.GenerateTokenAsync(userToMock, this.GetMockSecurityKey())));
+            } 
+            return mockObject.Object;
+        }
+
+        private IUserService MockCreateLoginToken()
+        {
+            var mockUser = this.GetMockUserData();
+            Mock<IUserService> mockObject = new Mock<IUserService>();
+            if (mockUser != null)
+            {
+                mockObject.Setup(m => m.CreateLoginToken(new UserDTO
+                {
+                    Email = mockUser.Email,
+                    Password = "testpassword",
+                }, GetMockSecurityKey()));
+            }
+            return mockObject.Object;
+        }
+
+        private IUserService MockRegisterWithConfirmationCode()
+        {
+            var mockUser = this.GetMockUserData();
+            Mock<IUserService> mockObject = new Mock<IUserService>();
+            if (mockUser != null)
+            {
+                mockObject.Setup(m => m.RegisterWithConfirmationCode(new UserDTO
+                {
+                    Email = mockUser.Email,
+                    Password = "testpassword",
+                }));
+            }
+            return mockObject.Object;
         }
 
         #endregion
-
-
     }
 }
