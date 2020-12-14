@@ -18,18 +18,19 @@ namespace TicTacToeGame.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Game>> GetAll()
+        public async Task<IEnumerable<Game>> GetAllAsync()
         {
             return await _dbContext.Games.Include(g => g.TicTacToe)
                     .ThenInclude(t => t.Cells).ToListAsync();
         }
 
-        public Task DeleteAsync(Game game)
+        public async Task DeleteAsync(Game game)
         {
-            throw new NotImplementedException();
+            _dbContext.Remove(game);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Game> GetOne(int id)
+        public async Task<Game> GetByIdAsync(int id)
         {
             IQueryable<Game> query = _dbContext.Games.Include(g => g.TicTacToe)
                     .ThenInclude(t => t.Cells)

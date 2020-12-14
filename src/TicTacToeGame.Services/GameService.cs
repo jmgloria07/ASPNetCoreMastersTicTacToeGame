@@ -23,12 +23,12 @@ namespace TicTacToeGame.Services
 
         public async Task<IEnumerable<Game>> GetGames()
         {
-            return await _gameRepository.GetAll();
+            return await _gameRepository.GetAllAsync();
         }
 
         public async Task<Game> GetGame(int id)
         {
-            return await _gameRepository.GetOne(id);
+            return await _gameRepository.GetByIdAsync(id);
         }
 
         public async Task<Game> CreateGame(Game game)
@@ -46,7 +46,7 @@ namespace TicTacToeGame.Services
         }
         public async Task<Game> CastTurn(TurnDto turnDto)
         {
-            Game game = await _gameRepository.GetOne(turnDto.Game);
+            Game game = await _gameRepository.GetByIdAsync(turnDto.Game);
 
             Cell cell = _ticTacToeHelper.GetCellFromRowAndCol(
                 game.TicTacToe.Cells, turnDto.Row, turnDto.Column);
@@ -61,6 +61,11 @@ namespace TicTacToeGame.Services
             game.GameState = _ticTacToeHelper.CalculateGameState(game.TicTacToe, cell.CellState);
 
             return await _gameRepository.UpdateAsync(game);
+        }
+
+        public async Task DeleteGame(Game game)
+        {
+            await _gameRepository.DeleteAsync(game);
         }
     }
 }

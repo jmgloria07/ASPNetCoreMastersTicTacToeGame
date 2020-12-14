@@ -14,5 +14,6 @@ namespace TicTacToeGame.Services
         public Task<Game> GetGame(int id);
         public Task<Game> CastTurn(TurnDto turnDto);
         public Task<IEnumerable<Game>> GetGames();
+        public Task DeleteGame(Game game);
     }
 }

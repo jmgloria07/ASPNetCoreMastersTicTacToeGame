@@ -98,9 +98,17 @@ namespace TicTacToeGame.Api.Controllers
 
         // DELETE api/<GamesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<AbstractResponseApiModel>> Delete(int id)
         {
-            throw new NotImplementedException();
+            Game game = await _gameService.GetGame(id);
+
+            if (game == null || await IsSingleGameForbidden(game))
+                throw new TicTacToeNotFoundException();
+
+            await _gameService.DeleteGame(game);
+
+            return CustomOk($"Deleted game ID: {id}",
+                new Game[] { game });
         }
 
 
