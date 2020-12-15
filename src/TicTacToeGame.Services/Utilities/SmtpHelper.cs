@@ -110,9 +110,10 @@ namespace TicTacToeGame.Services.Utilities
         /// <returns>Returns true if email sending is successful; otherwise, returns false</returns>
         public async Task Send(ArrayList attachments)
         {
+            const string sendGridKey = "ASPNETCORE_SENDGRID_APIKEY";
             MailMessage mail = new MailMessage();
 
-            mail.From = new MailAddress(this.Sender);
+            mail.From = new MailAddress(this.Sender, "Game Master");
 
             if (this.ToRecipients != null && this.ToRecipients.Count > 0)
             {
@@ -171,9 +172,11 @@ namespace TicTacToeGame.Services.Utilities
             {
                 smtpClient.Port = Convert.ToInt32(this.SmtpSettings.SmtpPort);
             }
-            //smtpClient.Credentials = new NetworkCredential(this.SmtpSettings.SmtpUserName, this.SmtpSettings.SmtpPassword);
-            smtpClient.EnableSsl = true;
-            smtpClient.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
+
+            var key = string.IsNullOrEmpty(this.SmtpSettings.SmtpPassword)
+                ? Environment.GetEnvironmentVariable(sendGridKey)
+                : this.SmtpSettings.SmtpPassword;
+            smtpClient.Credentials = new NetworkCredential(this.SmtpSettings.SmtpUserName, key);
 
             try
             {

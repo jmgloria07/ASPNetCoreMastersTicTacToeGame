@@ -14,7 +14,7 @@ namespace TicTacToeGame.Services
     {
         private readonly ISmtpHelper _smtpHelper;
         private readonly SmtpConfiguration _smtpConfiguration;
-        private const string GAME_MASTER_EMAIL = "gamemaster@magenic.com";
+        private const string GAME_MASTER_EMAIL = "russelp@magenic.com";
 
         public EmailService(ISmtpHelper smtpHelper, 
             IOptions<SmtpConfiguration> smtpConfiguration)
