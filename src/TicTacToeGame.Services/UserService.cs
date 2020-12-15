@@ -1,5 +1,6 @@
 ﻿using System;
 using TicTacToeGame.Services.Dto;
+using TicTacToeGame.Services.Utilities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,7 @@ namespace TicTacToeGame.Services
 {
     public class UserService : IUserService
     {
+        private readonly TicTacToeHelper _ticTacToeHelper = new TicTacToeHelper();
         private readonly SignInManager<IdentityUser> _signinManager;
         private readonly UserManager<IdentityUser> _userManager;
 
@@ -47,7 +49,7 @@ namespace TicTacToeGame.Services
             return new UserDTO
             {
                 Id = identityUser.Id,
-                LoginToken = GenerateTokenAsync(identityUser, securityKey)
+                LoginToken = _ticTacToeHelper.GenerateTokenAsync(identityUser, securityKey)
             };
         }
 
@@ -77,21 +79,6 @@ namespace TicTacToeGame.Services
                 Email = identityUser.Email,
                 EmailCode = code
             };
-        }
-
-        private string GenerateTokenAsync(IdentityUser user, SecurityKey securityKey)
-        {
-            IList<Claim> userClaims = new List<Claim>
-            {
-                new Claim("Id", user.Id),
-                new Claim("Email", user.Email)
-            };
-
-            return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
-                claims: userClaims,
-                expires: DateTime.UtcNow.AddMonths(1),
-                signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
-            ));
-        }
+        }       
     }
 }

@@ -4,6 +4,10 @@ using System.Text;
 using TicTacToeGame.Services.Dto;
 using TicTacToeGame.DomainsModels;
 using TicTacToeGame.Services.Exceptions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace TicTacToeGame.Services.Utilities
 {
@@ -125,6 +129,21 @@ namespace TicTacToeGame.Services.Utilities
             if (isDraw) return Game.State.DRAW;
 
             return ToggleGameStateForNextTurn(mark);
+        }
+
+        public string GenerateTokenAsync(IdentityUser user, SecurityKey securityKey)
+        {
+            IList<Claim> userClaims = new List<Claim>
+            {
+                new Claim("Id", user.Id),
+                new Claim("Email", user.Email)
+            };
+
+            return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
+                claims: userClaims,
+                expires: DateTime.UtcNow.AddMonths(1),
+                signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
+            ));
         }
 
         //-------------private methods----------------//
