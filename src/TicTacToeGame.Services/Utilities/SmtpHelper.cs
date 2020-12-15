@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
@@ -170,7 +171,8 @@ namespace TicTacToeGame.Services.Utilities
             {
                 smtpClient.Port = Convert.ToInt32(this.SmtpSettings.SmtpPort);
             }
-
+            //smtpClient.Credentials = new NetworkCredential(this.SmtpSettings.SmtpUserName, this.SmtpSettings.SmtpPassword);
+            smtpClient.EnableSsl = true;
             smtpClient.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
 
             try
