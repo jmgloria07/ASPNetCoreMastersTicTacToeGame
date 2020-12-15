@@ -13,6 +13,14 @@ namespace TicTacToeGame.Services.Utilities
     public class SmtpHelper : ISmtpHelper
     {
         /// <summary>
+        /// Gets or sets the SendGrid API Key.
+        /// </summary>
+        /// <value>
+        /// The API Key.
+        /// </value>
+        public string ApiKey { get; set; }
+        
+        /// <summary>
         /// Gets or sets the email sender.
         /// </summary>
         /// <value>
@@ -110,7 +118,6 @@ namespace TicTacToeGame.Services.Utilities
         /// <returns>Returns true if email sending is successful; otherwise, returns false</returns>
         public async Task Send(ArrayList attachments)
         {
-            const string sendGridKey = "ASPNETCORE_SENDGRID_APIKEY";
             MailMessage mail = new MailMessage();
 
             mail.From = new MailAddress(this.Sender, "Game Master");
@@ -174,7 +181,7 @@ namespace TicTacToeGame.Services.Utilities
             }
 
             var key = string.IsNullOrEmpty(this.SmtpSettings.SmtpPassword)
-                ? Environment.GetEnvironmentVariable(sendGridKey)
+                ? ApiKey
                 : this.SmtpSettings.SmtpPassword;
             smtpClient.Credentials = new NetworkCredential(this.SmtpSettings.SmtpUserName, key);
 

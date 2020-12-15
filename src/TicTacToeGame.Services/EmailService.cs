@@ -14,13 +14,15 @@ namespace TicTacToeGame.Services
     {
         private readonly ISmtpHelper _smtpHelper;
         private readonly SmtpConfiguration _smtpConfiguration;
-        private const string GAME_MASTER_EMAIL = "russelp@magenic.com";
+        private readonly SendGridConfiguration _sendGridConfiguration;
 
         public EmailService(ISmtpHelper smtpHelper, 
-            IOptions<SmtpConfiguration> smtpConfiguration)
+            IOptions<SmtpConfiguration> smtpConfiguration,
+            IOptions<SendGridConfiguration> sendGridConfiguration)
         {
             _smtpHelper = smtpHelper;
             _smtpConfiguration = smtpConfiguration.Value;
+            _sendGridConfiguration = sendGridConfiguration.Value;
         }
 
         public async Task SendEmailAsync(string recipient, string subject, string htmlMessage)
@@ -30,8 +32,9 @@ namespace TicTacToeGame.Services
 
         public async Task SendEmailAsync(List<string> recipients, string subject, string htmlMessage)
         {
+            _smtpHelper.ApiKey = _sendGridConfiguration.ApiKey;
             _smtpHelper.Subject = subject;
-            _smtpHelper.Sender = GAME_MASTER_EMAIL;
+            _smtpHelper.Sender = _sendGridConfiguration.Sender;
             _smtpHelper.ToRecipients = recipients;
             _smtpHelper.EmailBody = htmlMessage;
             _smtpHelper.SmtpSettings = new SmtpSettings

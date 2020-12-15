@@ -10,6 +10,13 @@ namespace TicTacToeGame.Services.Interfaces.Helpers
     public interface ISmtpHelper
     {
         /// <summary>
+        /// Gets or sets the SendGrid API Key.
+        /// </summary>
+        /// <value>
+        /// The API Key.
+        /// </value>
+        string ApiKey { get; set; }
+        /// <summary>
         /// Gets or sets the email sender.
         /// </summary>
         /// <value>

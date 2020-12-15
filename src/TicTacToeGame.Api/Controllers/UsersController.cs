@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using TicTacToeGame.Api.Models;
-using TicTacToeGame.Api.Properties;
+using TicTacToeGame.Api.Utilities;
 using TicTacToeGame.Services;
 using TicTacToeGame.Services.Dto;
 using TicTacToeGame.Services.Interfaces.Services;
@@ -66,12 +66,7 @@ namespace TicTacToeGame.Api.Controllers
             //TODO: send the generated URL to email
             return Accepted("/users/{user.Id}", new OkResponseApiModel
             {
-                Message = PLEASE_CONFIRM_MSG,
-                ResultInfo = new
-                {
-                    note = "This data should be temporary.",
-                    confirmEmailUrl
-                }
+                Message = PLEASE_CONFIRM_MSG
             });
         }
 

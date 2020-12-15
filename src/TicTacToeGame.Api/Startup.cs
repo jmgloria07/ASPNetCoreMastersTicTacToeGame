@@ -31,6 +31,7 @@ namespace TicTacToeGame.Api
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<TicTacToeDbContext>();
+                context.Database.EnsureDeleted();
                 context.Database.Migrate();
             }
 

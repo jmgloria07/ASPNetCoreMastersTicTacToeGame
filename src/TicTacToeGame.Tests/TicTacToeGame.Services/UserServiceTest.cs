@@ -7,7 +7,7 @@ using TicTacToeGame.Services;
 using Moq;
 using Xunit;
 using TicTacToeGame.Services.Utilities;
-using TicTacToeGame.Api.Properties;
+using TicTacToeGame.Api.Utilities;
 using Microsoft.Extensions.Options;
 using TicTacToeGame.Services.Dto;
 using Microsoft.IdentityModel.Tokens;

@@ -12,8 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_SENDGRID_APIKEY": "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"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "TicTacToe.Api": {

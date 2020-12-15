@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using TicTacToeGame.Api.Properties;
 using TicTacToeGame.Api.Utilities;
 using TicTacToeGame.Configurations;
 
@@ -14,6 +13,7 @@ namespace TicTacToeGame.Api.ServiceConfiguration
         public static IServiceCollection AddAppServices(this IServiceCollection services, IConfiguration config)
         {
             services.Configure<SmtpConfiguration>(config.GetSection("SmtpSettings"));
+            services.Configure<SendGridConfiguration>(config.GetSection("SendGrid"));
             services.AddControllerConfigurations();
             services.AddDatabase(config);
             services.AddSwagger();
