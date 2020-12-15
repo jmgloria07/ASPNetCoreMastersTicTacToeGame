@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TicTacToeGame.Api.AppSettings
+namespace TicTacToeGame.Configurations
 {
     public class SmtpConfiguration
     {

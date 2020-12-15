@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using TicTacToeGame.Api.Utilities;
 using TicTacToeGame.Repositories;
 using TicTacToeGame.Services;
+using TicTacToeGame.Services.Interfaces.Helpers;
+using TicTacToeGame.Services.Interfaces.Services;
 using TicTacToeGame.Services.Utilities;
 
 namespace TicTacToeGame.Api
@@ -17,6 +19,8 @@ namespace TicTacToeGame.Api
 		{
 			registrator.Register<IUserService, UserService>();
 			registrator.Register<IGameService, GameService>();
+			registrator.Register<IEmailService, EmailService>();
+			registrator.Register<ISmtpHelper, SmtpHelper>();
 			registrator.Register<IGameRepository, GameRepository>();
 			registrator.Register<IAuthorizationHandler, IsUserInvolvedAuthorizationHandler>();
 			registrator.RegisterInstance(new TicTacToeHelper());

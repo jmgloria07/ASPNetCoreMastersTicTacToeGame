@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TicTacToeGame.Configurations\TicTacToeGame.Configurations.csproj" />
     <ProjectReference Include="..\TicTacToeGame.Repositories\TicTacToeGame.Repositories.csproj" />
   </ItemGroup>
 

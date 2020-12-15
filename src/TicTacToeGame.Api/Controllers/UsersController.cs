@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using TicTacToeGame.Api.Models;
 using TicTacToeGame.Api.Properties;
 using TicTacToeGame.Services;
 using TicTacToeGame.Services.Dto;
+using TicTacToeGame.Services.Interfaces.Services;
 
 namespace TicTacToeGame.Api.Controllers
 {
@@ -20,16 +22,20 @@ namespace TicTacToeGame.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
         private readonly JwtOptions _jwtOptions;
 
         private const string EMAIL_CONFIRMED_TXT = "Email successfully confirmed.";
+        private const string EMAIL_CONFIRM_SUBJECT = "Email Confirmation!";
         private const string PLEASE_CONFIRM_MSG = "Please check your inbox to confirm the registered email.";
         private const string LOGIN_SUCCESS_TXT = "Login is successful.";
 
         public UsersController(IUserService userService,
+            IEmailService emailService,
             IOptions<JwtOptions> jwtOptions)
         {
             _userService = userService;
+            _emailService = emailService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -52,6 +58,10 @@ namespace TicTacToeGame.Api.Controllers
             string confirmEmailUrl = Request.Scheme + "://"
                 + Request.Host
                 + $"/api/users/{user.Id}/email/confirm?code={encodedCode}";
+
+            var message = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(confirmEmailUrl)}'>clicking here</a>.";
+
+            await _emailService.SendEmailAsync(user.Email, EMAIL_CONFIRM_SUBJECT, message);
 
             //TODO: send the generated URL to email
             return Accepted("/users/{user.Id}", new OkResponseApiModel

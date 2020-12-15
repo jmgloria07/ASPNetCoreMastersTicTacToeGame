@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToeGame.Repositories"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToeGame.DomainsModels", "src\TicTacToeGame.DomainsModels\TicTacToeGame.DomainsModels.csproj", "{C0B92E74-7373-478C-BE6F-509E3030BF9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToeGame.Tests", "src\TicTacToeGame.Tests\TicTacToeGame.Tests.csproj", "{2C54FA87-ADDE-491A-A432-35688CB3D85F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTacToeGame.Tests", "src\TicTacToeGame.Tests\TicTacToeGame.Tests.csproj", "{2C54FA87-ADDE-491A-A432-35688CB3D85F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToeGame.Configurations", "src\TicTacToeGame.Configurations\TicTacToeGame.Configurations.csproj", "{67484917-3347-4207-928B-91972667589D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{2C54FA87-ADDE-491A-A432-35688CB3D85F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C54FA87-ADDE-491A-A432-35688CB3D85F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C54FA87-ADDE-491A-A432-35688CB3D85F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67484917-3347-4207-928B-91972667589D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67484917-3347-4207-928B-91972667589D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67484917-3347-4207-928B-91972667589D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67484917-3347-4207-928B-91972667589D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

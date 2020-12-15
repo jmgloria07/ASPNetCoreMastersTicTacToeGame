@@ -2,14 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TicTacToeGame.Api.AppSettings;
 using TicTacToeGame.Api.Properties;
 using TicTacToeGame.Api.Utilities;
+using TicTacToeGame.Configurations;
 
 namespace TicTacToeGame.Api.ServiceConfiguration
 {
