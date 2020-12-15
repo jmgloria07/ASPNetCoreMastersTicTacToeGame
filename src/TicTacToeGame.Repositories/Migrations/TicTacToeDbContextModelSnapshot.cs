@@ -238,7 +238,7 @@ namespace TicTacToeGame.Repositories.Migrations
                     b.Property<int>("RowNum")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("SetDate")
+                    b.Property<DateTime?>("SetDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("TicTacToeId")

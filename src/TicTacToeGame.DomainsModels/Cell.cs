@@ -30,6 +30,6 @@ namespace TicTacToeGame.DomainsModels
         public State CellState { get; set; }
         public string OwnerId { get; set; }
         public string CastedBy { get; set; }
-        public DateTime SetDate { get; set; }
+        public DateTime? SetDate { get; set; }
     }
 }
