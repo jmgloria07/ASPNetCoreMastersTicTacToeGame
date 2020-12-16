@@ -19,7 +19,7 @@ namespace TicTacToeGame.Api.CustomValidation
             try
             {
                 return Regex.IsMatch(password,
-                    @"^(?=.{6,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",
+                    @"^(?=.{6,100})(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=]).*$",
                     RegexOptions.None, TimeSpan.FromMilliseconds(250));
             }
             catch (RegexMatchTimeoutException)
